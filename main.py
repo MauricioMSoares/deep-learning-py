@@ -7,6 +7,48 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score
 
 from ann import setup_ann
+from cnn import setup_cnn
+
+
+def run_ann(x_train, x_test, y_train, y_test):
+    classifier = setup_ann()
+    classifier.fit(x_train, y_train, batch_size=10, epochs=100)
+
+    y_prediction = classifier.predict(x_test)
+    y_prediction = y_prediction > 0.5
+
+    cm = confusion_matrix(y_test, y_prediction)
+    print("\nConfusion matrix")
+    print(cm)
+
+    accuracy = accuracy_score(y_test, y_prediction)
+    print("\nAccuracy score")
+    print(accuracy)
+
+
+def run_cnn(x_train, x_test, y_train, y_test):
+    setup_cnn(x_train, x_test, y_train, y_test)
+
+
+def main():
+    while True:
+        user_input = input(
+            "Dataset loaded, type an option\n"
+            "1 - Run artificial neural network\n"
+            "2 - Run convolutional neural network\n"
+            "3 - Exit\n"
+        )
+
+        match user_input:
+            case "1":
+                run_ann(x_train, x_test, y_train, y_test)
+            case "2":
+                run_cnn(x_train, x_test, y_train, y_test)
+            case "3":
+                print("Exiting program.")
+                break
+            case _:
+                print("Invalid option, please try again.")
 
 
 dataset = pd.read_csv("Churn_Modelling.csv")
@@ -44,16 +86,4 @@ x_train_df = pd.DataFrame(x_train)
 print("\nX Dataframes after train and test transform")
 print(x_train_df)
 
-classifier = setup_ann()
-classifier.fit(x_train, y_train, batch_size=10, epochs=100)
-
-y_prediction = classifier.predict(x_test)
-y_prediction = (y_prediction > 0.5)
-
-cm = confusion_matrix(y_test, y_prediction)
-print("\nConfusion matrix")
-print(cm)
-
-accuracy = accuracy_score(y_test, y_prediction)
-print("\nAccuracy score")
-print(accuracy)
+main()
